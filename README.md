@@ -123,13 +123,13 @@ The target server is also Ubuntu.
 Example deployment location:
 
 ```text
-/opt/apps/cicd-demo/
+/opt/apps/cicd-pipeline/
 ```
 
 The deployed JAR will be:
 
 ```text
-/opt/apps/cicd-demo/cicd-demo.jar
+/opt/apps/cicd-demo/cicd-pipeline.jar
 ```
 
 Application:
@@ -138,7 +138,7 @@ Application:
 Java Application
      |
      v
-cicd-demo.jar
+cicd-pipeline.jar
      |
      v
 Java Process
@@ -151,7 +151,7 @@ Java Process
 The application should follow a standard Maven project structure.
 
 ```text
-cicd-demo/
+cicd-pipeline/
 │
 ├── src/
 │   ├── main/
@@ -187,7 +187,7 @@ Example:
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>cicd-demo</artifactId>
+    <artifactId>cicd-pipeline</artifactId>
     <version>1.0.0</version>
 
     <properties>
@@ -255,7 +255,7 @@ target/
 Example:
 
 ```text
-target/cicd-demo-1.0.0.jar
+target/cicd-pipeline-1.0.0.jar
 ```
 
 Verify:
@@ -273,19 +273,19 @@ Before automating deployment, demonstrate how the application is started manuall
 Example:
 
 ```bash
-java -jar target/cicd-demo-1.0.0.jar
+java -jar target/cicd-pipeline-1.0.0.jar
 ```
 
 For a background process:
 
 ```bash
-nohup java -jar target/cicd-demo-1.0.0.jar > app.log 2>&1 &
+nohup java -jar target/cicd-pipeline-1.0.0.jar > app.log 2>&1 &
 ```
 
 Check the process:
 
 ```bash
-ps -ef | grep cicd-demo
+ps -ef | grep cicd-pipeline
 ```
 
 Check the log:
@@ -301,27 +301,27 @@ tail -f app.log
 On the target Ubuntu server, create the application directory:
 
 ```bash
-sudo mkdir -p /opt/apps/cicd-demo
+sudo mkdir -p /opt/apps/cicd-pipeline
 ```
 
 Set appropriate ownership:
 
 ```bash
-sudo chown -R <application-user>:<application-user> /opt/apps/cicd-demo
+sudo chown -R <application-user>:<application-user> /opt/apps/cicd-pipeline
 ```
 
 Example:
 
 ```text
-/opt/apps/cicd-demo/
+/opt/apps/cicd-pipeline/
 ```
 
 The final deployment should look like:
 
 ```text
-/opt/apps/cicd-demo/
+/opt/apps/cicd-pipeline/
 │
-├── cicd-demo.jar
+├── cicd-pipeline.jar
 └── app.log
 ```
 
@@ -336,14 +336,14 @@ Developer Machine
        |
        | Build
        v
-target/cicd-demo-1.0.0.jar
+target/cicd-pipeline-1.0.0.jar
        |
        | Copy
        v
 Ubuntu Server
        |
        v
-/opt/apps/cicd-demo/cicd-demo.jar
+/opt/apps/cicd-demo/cicd-pipeline.jar
        |
        | Restart
        v
@@ -353,8 +353,8 @@ Java Application
 Example using SCP:
 
 ```bash
-scp target/cicd-demo-1.0.0.jar \
-    <user>@<server>:/opt/apps/cicd-demo/cicd-demo.jar
+scp target/cicd-pipeline-1.0.0.jar \
+    <user>@<server>:/opt/apps/cicd-demo/cicd-pipeline.jar
 ```
 
 Then SSH to the server:
@@ -366,20 +366,20 @@ ssh <user>@<server>
 Stop the old application:
 
 ```bash
-pkill -f cicd-demo.jar || true
+pkill -f cicd-pipeline.jar || true
 ```
 
 Start the new application:
 
 ```bash
-nohup java -jar /opt/apps/cicd-demo/cicd-demo.jar \
-    > /opt/apps/cicd-demo/app.log 2>&1 &
+nohup java -jar /opt/apps/cicd-demo/cicd-pipeline.jar \
+    > /opt/apps/cicd-pipeline/app.log 2>&1 &
 ```
 
 Check:
 
 ```bash
-ps -ef | grep cicd-demo
+ps -ef | grep cicd-pipeline
 ```
 
 ---
@@ -480,9 +480,9 @@ pipeline {
     }
 
     environment {
-        APP_NAME = 'cicd-demo'
-        DEPLOY_DIR = '/opt/apps/cicd-demo'
-        JAR_NAME = 'cicd-demo.jar'
+        APP_NAME = 'cicd-pipeline'
+        DEPLOY_DIR = '/opt/apps/cicd-pipeline'
+        JAR_NAME = 'cicd-pipeline.jar'
         SERVER = '<DEPLOYMENT_SERVER>'
         USER = '<DEPLOYMENT_USER>'
     }
@@ -736,7 +736,7 @@ New Item
 Enter:
 
 ```text
-cicd-demo
+cicd-pipeline
 ```
 
 Select:
@@ -837,26 +837,26 @@ ssh <deployment-user>@<deployment-server>
 Check the deployment directory:
 
 ```bash
-ls -lh /opt/apps/cicd-demo/
+ls -lh /opt/apps/cicd-pipeline/
 ```
 
 Expected:
 
 ```text
-cicd-demo.jar
+cicd-pipeline.jar
 app.log
 ```
 
 Check the application process:
 
 ```bash
-ps -ef | grep cicd-demo.jar
+ps -ef | grep cicd-pipeline.jar
 ```
 
 Check logs:
 
 ```bash
-tail -f /opt/apps/cicd-demo/app.log
+tail -f /opt/apps/cicd-pipeline/app.log
 ```
 
 ---
@@ -1016,7 +1016,7 @@ However, a better approach on Ubuntu is to manage the application using `systemd
 Example service:
 
 ```text
-/etc/systemd/system/cicd-demo.service
+/etc/systemd/system/cicd-pipeline.service
 ```
 
 Example:
@@ -1028,8 +1028,8 @@ After=network.target
 
 [Service]
 User=appuser
-WorkingDirectory=/opt/apps/cicd-demo
-ExecStart=/usr/bin/java -jar /opt/apps/cicd-demo/cicd-demo.jar
+WorkingDirectory=/opt/apps/cicd-pipeline
+ExecStart=/usr/bin/java -jar /opt/apps/cicd-demo/cicd-pipeline.jar
 Restart=always
 RestartSec=5
 
@@ -1047,25 +1047,25 @@ sudo systemctl enable cicd-demo
 Start:
 
 ```bash
-sudo systemctl start cicd-demo
+sudo systemctl start cicd-pipeline
 ```
 
 Check status:
 
 ```bash
-sudo systemctl status cicd-demo
+sudo systemctl status cicd-pipeline
 ```
 
 Restart:
 
 ```bash
-sudo systemctl restart cicd-demo
+sudo systemctl restart cicd-pipeline
 ```
 
 View logs:
 
 ```bash
-journalctl -u cicd-demo -f
+journalctl -u cicd-pipeline -f
 ```
 
 Then the Jenkins deployment becomes simpler:
@@ -1073,7 +1073,7 @@ Then the Jenkins deployment becomes simpler:
 ```text
 Copy JAR
    ↓
-systemctl restart cicd-demo
+systemctl restart cicd-pipeline
    ↓
 Verify
 ```
@@ -1128,7 +1128,7 @@ Once developers understand the basic demo, explain how this can evolve into a pr
 One important limitation of simply replacing:
 
 ```text
-cicd-demo.jar
+cicd-pipeline.jar
 ```
 
 is that rollback becomes difficult.
@@ -1136,17 +1136,17 @@ is that rollback becomes difficult.
 A better deployment structure is:
 
 ```text
-/opt/apps/cicd-demo/
+/opt/apps/cicd-pipeline/
 │
 ├── releases/
 │   ├── 1.0.0/
-│   │   └── cicd-demo.jar
+│   │   └── cicd-pipeline.jar
 │   │
 │   ├── 1.0.1/
-│   │   └── cicd-demo.jar
+│   │   └── cicd-pipeline.jar
 │   │
 │   └── 1.0.2/
-│       └── cicd-demo.jar
+│       └── cicd-pipeline.jar
 │
 └── current -> releases/1.0.2
 ```
@@ -1220,7 +1220,7 @@ Check:
 Check:
 
 ```bash
-ls -ld /opt/apps/cicd-demo
+ls -ld /opt/apps/cicd-pipeline
 ```
 
 Make sure the deployment user has write access.
@@ -1232,19 +1232,19 @@ Make sure the deployment user has write access.
 Check:
 
 ```bash
-tail -100 /opt/apps/cicd-demo/app.log
+tail -100 /opt/apps/cicd-pipeline/app.log
 ```
 
 If using systemd:
 
 ```bash
-systemctl status cicd-demo
+systemctl status cicd-pipeline
 ```
 
 and:
 
 ```bash
-journalctl -u cicd-demo -n 100
+journalctl -u cicd-pipeline -n 100
 ```
 
 ---
@@ -1313,10 +1313,10 @@ Jenkins is not replacing the developer's build process. It is **automating the r
               | Ubuntu App Server |
               |                   |
               | /opt/apps/        |
-              |   cicd-demo/      |
+              |   cicd-pipeline/      |
               |       |           |
               |       v           |
-              |  cicd-demo.jar    |
+              |  cicd-pipeline.jar    |
               +-------------------+
                         |
                         v
