@@ -12,4 +12,9 @@ public class PublicController {
     String status(){
         return "Application is running on port 8080";
     }
+
+    @GetMapping("hello")
+    String hello(){
+        return "Hello World!";
+    }
 }
