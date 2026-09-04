@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DEPLOYMENT_PATH="C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps"
+        DEPLOYMENT_PATH="C:\\Program Files\\apache-tomcat-10.1.46\\webapps"
         LOG_PATH= "C:\\logs\\cicd-pipeline"
     }
 
